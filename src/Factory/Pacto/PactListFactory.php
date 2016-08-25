@@ -34,7 +34,7 @@ class PactListFactory implements ContractFactoryInterface
                 $this->pactoRequestFactory->from($interaction['request']),
                 $this->pactoResponseFactory->from($interaction['response']),
                 $interaction['description'],
-                $interaction['provider_state']
+                $interaction['providerState']
             );
 
             $pactList->add($pact);

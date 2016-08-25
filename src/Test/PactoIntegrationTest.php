@@ -63,7 +63,7 @@ class PactoIntegrationTest
             $suite->addTest($t);
         }
 
-        $runner->run($suite, ['colors' =>  \PHPUnit_TextUI_ResultPrinter::COLOR_ALWAYS]);
+        $runner->run($suite, ['colors' =>  true]);
     }
 
     /**

@@ -1,6 +1,6 @@
 <phpunit bootstrap="./vendor/autoload.php" colors="true">
     <testsuites>
-        <testsuite name="Erlangb\\Phpacto Tests">
+        <testsuite name="Pact\\Phpacto Tests">
             <directory>./test</directory>
         </testsuite>
     </testsuites>

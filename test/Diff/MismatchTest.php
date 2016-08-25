@@ -1,6 +1,6 @@
 <?php
 
-namespace Erlangb\Phpacto\Diff;
+namespace Pact\Phpacto\Diff;
 
 class MismatchTest extends \PHPUnit_Framework_TestCase
 {

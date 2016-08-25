@@ -1,8 +1,8 @@
 <?php
 
-namespace Erlangb\Phpacto\Factory\Pacto;
+namespace Pact\Phpacto\Factory\Pacto;
 
-use Erlangb\Phpacto\Factory\PactoResponseFactoryInterface;
+use Pact\Phpacto\Factory\PactoResponseFactoryInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 

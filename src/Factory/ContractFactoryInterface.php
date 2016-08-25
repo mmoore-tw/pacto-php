@@ -1,8 +1,8 @@
 <?php
 
-namespace Erlangb\Phpacto\Factory;
+namespace Pact\Phpacto\Factory;
 
-use Erlangb\Phpacto\Pact\Pact;
+use Pact\Phpacto\Pact\Pact;
 
 interface ContractFactoryInterface
 {

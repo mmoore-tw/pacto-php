@@ -1,12 +1,12 @@
 <?php
 
-namespace Erlangb\Phpacto\Factory\Pacto;
+namespace Pact\Phpacto\Factory\Pacto;
 
-use Erlangb\Phpacto\Factory\ContractFactoryInterface;
-use Erlangb\Phpacto\Factory\PactoRequestFactoryInterface;
-use Erlangb\Phpacto\Factory\PactoResponseFactoryInterface;
-use Erlangb\Phpacto\Pact\Pact;
-use Erlangb\Phpacto\Pact\PactList;
+use Pact\Phpacto\Factory\ContractFactoryInterface;
+use Pact\Phpacto\Factory\PactoRequestFactoryInterface;
+use Pact\Phpacto\Factory\PactoResponseFactoryInterface;
+use Pact\Phpacto\Pact\Pact;
+use Pact\Phpacto\Pact\PactList;
 
 class PactListFactory implements ContractFactoryInterface
 {

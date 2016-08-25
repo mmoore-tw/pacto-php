@@ -1,8 +1,8 @@
 <?php
 
-namespace Erlangb\Phpacto\Consumer;
+namespace Pact\Phpacto\Consumer;
 
-use Erlangb\Phpacto\Pact\Pact;
+use Pact\Phpacto\Pact\Pact;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 

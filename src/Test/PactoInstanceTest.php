@@ -1,12 +1,12 @@
 <?php
 
-namespace Erlangb\Phpacto\Test;
+namespace Pact\Phpacto\Test;
 
-use Erlangb\Phpacto\Matcher\BodyMatcher;
-use Erlangb\Phpacto\Matcher\HeadersMatcher;
-use Erlangb\Phpacto\Matcher\StatusCodeMatcher;
-use Erlangb\Phpacto\Pact\Pact;
-use Erlangb\Phpacto\Test\Output\MismatchDiffOutput;
+use Pact\Phpacto\Matcher\BodyMatcher;
+use Pact\Phpacto\Matcher\HeadersMatcher;
+use Pact\Phpacto\Matcher\StatusCodeMatcher;
+use Pact\Phpacto\Pact\Pact;
+use Pact\Phpacto\Test\Output\MismatchDiffOutput;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 

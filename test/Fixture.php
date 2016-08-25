@@ -1,6 +1,6 @@
 <?php
 
-namespace Erlangb\Phpacto;
+namespace Pact\Phpacto;
 
 class Fixture
 {

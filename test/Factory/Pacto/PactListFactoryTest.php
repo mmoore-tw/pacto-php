@@ -1,8 +1,8 @@
 <?php
 
-namespace Erlangb\Phpacto\Factory\Pacto;
+namespace Pact\Phpacto\Factory\Pacto;
 
-use Erlangb\Phpacto\Fixture;
+use Pact\Phpacto\Fixture;
 
 class PactListFactoryTest extends \PHPUnit_Framework_TestCase
 {

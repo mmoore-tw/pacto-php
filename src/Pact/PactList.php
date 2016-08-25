@@ -1,6 +1,6 @@
 <?php
 
-namespace Erlangb\Phpacto\Pact;
+namespace Pact\Phpacto\Pact;
 
 class PactList
 {

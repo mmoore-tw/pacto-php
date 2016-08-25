@@ -1,9 +1,9 @@
 <?php
 
-namespace Erlangb\Phpacto\Matcher;
+namespace Pact\Phpacto\Matcher;
 
-use Erlangb\Phpacto\Diff\Mismatch;
-use Erlangb\Phpacto\Diff\MismatchType;
+use Pact\Phpacto\Diff\Mismatch;
+use Pact\Phpacto\Diff\MismatchType;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Stream;
 

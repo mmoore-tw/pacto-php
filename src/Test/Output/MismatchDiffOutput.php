@@ -1,9 +1,9 @@
 <?php
 
-namespace Erlangb\Phpacto\Test\Output;
+namespace Pact\Phpacto\Test\Output;
 
-use Erlangb\Phpacto\Diff\Diff;
-use Erlangb\Phpacto\Pact\Pact;
+use Pact\Phpacto\Diff\Diff;
+use Pact\Phpacto\Pact\Pact;
 use SebastianBergmann\Exporter\Exporter;
 
 class MismatchDiffOutput

@@ -1,10 +1,10 @@
 <?php
 
-namespace Erlangb\Phpacto\Test;
+namespace Pact\Phpacto\Test;
 
-use Erlangb\Phpacto\Factory\Pacto\PactListFactory;
-use Erlangb\Phpacto\Pact\Pact;
-use Erlangb\Phpacto\Pact\PactList;
+use Pact\Phpacto\Factory\Pacto\PactListFactory;
+use Pact\Phpacto\Pact\Pact;
+use Pact\Phpacto\Pact\PactList;
 use Symfony\Component\Finder\Finder;
 
 class PactoIntegrationTest

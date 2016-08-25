@@ -1,6 +1,6 @@
 <?php
 
-namespace Erlangb\Phpacto\Factory;
+namespace Pact\Phpacto\Factory;
 
 use Psr\Http\Message\RequestInterface;
 

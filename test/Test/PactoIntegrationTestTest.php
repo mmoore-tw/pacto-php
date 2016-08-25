@@ -1,6 +1,6 @@
 <?php
 
-namespace Erlangb\Phpacto\Test;
+namespace Pact\Phpacto\Test;
 
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;

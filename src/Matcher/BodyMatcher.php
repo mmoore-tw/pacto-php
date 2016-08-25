@@ -1,10 +1,10 @@
 <?php
 
-namespace Pact\Phpacto\Matcher;
+namespace Erlangb\Phpacto\Matcher;
 
-use Pact\Phpacto\Diff\Diff;
-use Pact\Phpacto\Diff\Mismatch;
-use Pact\Phpacto\Diff\MismatchType;
+use Erlangb\Phpacto\Diff\Diff;
+use Erlangb\Phpacto\Diff\Mismatch;
+use Erlangb\Phpacto\Diff\MismatchType;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -53,6 +53,17 @@ class BodyMatcher
                     )
                 );
             }
+            else {
+                if ($actualBody[$key] !== $expectedBody[$key]) {
+                    $diff->add(
+                        new Mismatch(
+                            self::LOCATION,
+                            MismatchType::UNEQUAL,
+                            [$expectedBody[$key], $actualBody[$key]]
+                        )
+                    );
+                }
+            }
 
             if (is_array($value)) {
                 $this->getDiffRecursively($value, $actualBody[$key], $diff);
@@ -61,4 +72,4 @@ class BodyMatcher
 
         return $diff;
     }
-}
+}:

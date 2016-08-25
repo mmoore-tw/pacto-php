@@ -1,5 +1,5 @@
 {
-    "name": "erlangb/php-pacto-psr7",
+    "name": "mmoore-tw/php-pacto",
     "description": "translate pacto consumer description to psr7 request",
     "require": {
         "php": "^5.6 || ^7.0",
@@ -13,18 +13,22 @@
     "license": "GPL3",
     "authors": [
         {
-            "name": "danieledangeli",
-            "email": "dangeli88.daniele@gmail.com"
+            "name": "Matthew Moore",
+            "email": "mmoore@thoughtworks.com"
+        },
+        {
+          "name": "Taina Caetano",
+          "email": "tcaetan@thoughtworks.com"
         }
     ],
     "autoload": {
         "psr-4": {
-      	     "Erlangb\\Phpacto\\": "src/"
+      	     "Pact\\Phpacto\\": "src/"
         }
      },
   "autoload-dev": {
       "psr-4": {
-        "Erlangb\\Phpacto\\": "test/"
+        "Pact\\Phpacto\\": "test/"
       }
    }
 }

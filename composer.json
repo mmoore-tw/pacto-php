@@ -1,5 +1,5 @@
 {
-    "name": "mmoore-tw/php-pacto",
+    "name": "mmoore-tw/pacto-php",
     "description": "translate pacto consumer description to psr7 request",
     "require": {
         "php": "^5.6 || ^7.0",

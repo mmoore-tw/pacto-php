@@ -72,4 +72,4 @@ class BodyMatcher
 
         return $diff;
     }
-}:
+}

@@ -15,7 +15,7 @@ class PactoRequestFactory implements PactoRequestFactoryInterface
             $requestArray['path'],
             $requestArray['method'],
             $str,
-            $requestArray['headers']
+            isset($requestArray['headers']) ? $requestArray['headers'] : []
         );
 
         return $request;

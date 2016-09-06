@@ -63,7 +63,7 @@ class PactoIntegrationTest
             $suite->addTest($t);
         }
 
-        $runner->run($suite, ['colors' =>  true]);
+        $runner->run($suite, ['colors' =>  false]);
     }
 
     /**

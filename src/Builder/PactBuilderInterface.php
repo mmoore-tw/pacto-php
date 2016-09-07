@@ -2,7 +2,10 @@
 
 namespace Pact\Phpacto\Builder;
 
-
+/**
+ * Interface PactBuilderInterface
+ * @package Pact\Phpacto\Builder
+ */
 interface PactBuilderInterface {
     
     public function ServiceConsumer($consumerName);

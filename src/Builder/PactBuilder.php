@@ -2,6 +2,7 @@
 
 namespace Pact\Phpacto\Builder;
 
+
 /**
  * Class PactBuilder
  * @package Pact\Phpacto\Builder
@@ -14,6 +15,7 @@ class PactBuilder implements PactBuilderInterface
     private $interactions;
     private $metadata;
 
+
     public function __construct()
     {
         $provider = array();
@@ -25,13 +27,15 @@ class PactBuilder implements PactBuilderInterface
 
     public function ProviderName()
     {
-        return $this->provider["provider"];
+        return $this->provider["name"];
     }
+
 
     public function ConsumerName()
     {
-        return $this->consumer["consumer"];
+        return $this->consumer["name"];
     }
+
 
     public function ServiceConsumer($consumerName)
     {
@@ -41,7 +45,7 @@ class PactBuilder implements PactBuilderInterface
             );
         }
 
-        $this->consumer['consumer'] = $consumerName;
+        $this->consumer['name'] = $consumerName;
         return $this;
     }
 
@@ -54,14 +58,42 @@ class PactBuilder implements PactBuilderInterface
             );
         }
 
-        $this->provider['provider'] = $providerName;
+        $this->provider['name'] = $providerName;
         return $this;
     }
 
 
+    public function AddMetadata($newMetadata)
+    {
+        // first value entered
+        if (!isset($this->metadata)) {
+            $this->metadata = $newMetadata;
+        } else {
+            $this->metadata += $newMetadata;
+        }
+
+        return $this;
+    }
+
+    public function RemoveMetadata($key)
+    {
+        if (isset($this->metadata[$key])) {
+            unset($this->metadata[$key]);
+        } else {
+            throw new \InvalidArgumentException("Key not found in metadata section");
+        }
+
+        return $this;
+    }
+
+    public function Metadata()
+    {
+        return $this->metadata;
+    }
+
     public function Build($fileName)
     {
-        $pactFile = json_encode($this);
+        $pactFile = json_encode(get_object_vars($this), JSON_PRETTY_PRINT);
         return $pactFile;
     }
 

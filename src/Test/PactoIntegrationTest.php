@@ -63,7 +63,14 @@ class PactoIntegrationTest
             $suite->addTest($t);
         }
 
-        $runner->run($suite, ['colors' =>  true]);
+        $result = $runner->run($suite, ['colors' => false]);
+
+        $errors = $result->errors();
+        $failures = $result->failures();
+
+        if (!(empty($errors) && empty($failures))) {
+            exit(1);
+        }
     }
 
     /**

@@ -30,12 +30,10 @@ class PactBuilder implements PactBuilderInterface
         return $this->provider["name"];
     }
 
-
     public function ConsumerName()
     {
         return $this->consumer["name"];
     }
-
 
     public function ServiceConsumer($consumerName)
     {
@@ -49,7 +47,6 @@ class PactBuilder implements PactBuilderInterface
         return $this;
     }
 
-
     public function HasPactWith($providerName)
     {
         if (!is_string($providerName) || $providerName == "") {
@@ -61,7 +58,6 @@ class PactBuilder implements PactBuilderInterface
         $this->provider['name'] = $providerName;
         return $this;
     }
-
 
     public function AddMetadata($newMetadata)
     {
@@ -95,6 +91,12 @@ class PactBuilder implements PactBuilderInterface
     {
         $pactFile = json_encode(get_object_vars($this), JSON_PRETTY_PRINT);
         return $pactFile;
+    }
+
+    public function AddInteraction(PactInteraction $newInteraction){
+
+        $this->interactions += $newInteraction;
+
     }
 
 }

@@ -84,11 +84,14 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
         $filename = __DIR__ . "/test-pack.json";
 
         $pi = (new PactInteraction())
-                        ->Description("Some description")
-                        ->ProviderState("Get an user with ID 239443")
-                        ->RequestMethod("GET")
-                        ->RequestHeaders(array("Content-Type" => "application/json"))
-                        ->RequestPath("/some/path");
+                ->Description("Some description")
+                ->ProviderState("Get an user with ID 239443")
+                ->RequestMethod("GET")
+                ->RequestHeaders(array("Content-Type" => "application/json"))
+                ->RequestPath("/some/path")
+                ->ResponseHeaders(array("Content-Type" => "application/json"))
+                ->ResponseStatus(400)
+                ->ResponseBody("Some message");
 
         // Build the contract
         $pb = new PactBuilder();
@@ -137,13 +140,9 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
         $headers = array("Content-Type" => "application/json");
 
         $pi = (new PactInteraction())
-                ->Description("Some description")
-                ->ProviderState("Get an user with ID 239443")
-                ->RequestMethod("GET")
-                ->RequestHeaders($headers)
-                ->RequestPath("/some/path");
+                ->RequestHeaders($headers);
 
-        $this->assertEquals($headers, $pi->Headers());
+        $this->assertEquals($headers, $pi->Headers(REQUEST));
     }
 
     public function InteractionHeaderCases()
@@ -163,12 +162,17 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
     public function testPactInteractionRequestHeaderThrowsErrorWhenNotArray($headers)
     {
         $pi = (new PactInteraction())
-                ->Description("Some description")
-                ->ProviderState("Get an user with ID 239443")
-                ->RequestMethod("GET")
-                ->RequestHeaders($headers)
-                ->RequestPath("/some/path");
+                ->RequestHeaders($headers);
     }
 
-
+    /**
+     * @expectedException InvalidArgumentException
+     * @dataProvider InteractionHeaderCases
+     * @param $headers array HTTP message headers
+     */
+    public function testPactInteractionResponseHeaderThrowsErrorWhenNotArray($headers)
+    {
+        $pi = (new PactInteraction())
+                ->ResponseHeaders($headers);
+    }
 }

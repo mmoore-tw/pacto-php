@@ -2,8 +2,8 @@
 
 namespace Pact\Phpacto\Builder;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+define("REQUEST", "REQUEST");
+define("RESPONSE", "RESPONSE");
 
 /**
  * Class PactInteraction
@@ -21,8 +21,8 @@ class PactInteraction
     {
         $this->description = "";
         $this->providerState = "";
-        $this->request = array("method" => "", "path" => "", "headers" => array(), "query" => "");
-        $this->response = array("status" => 0, "headers" => array(), "body" => array());
+        $this->request = array("method" => null, "path" => null, "headers" => null, "query" => "", "body" => null);
+        $this->response = array("status" => 0, "headers" => null, "body" => null);
     }
 
     public function Description($description)
@@ -37,7 +37,8 @@ class PactInteraction
         return $this;
     }
 
-    public function Method(){
+    public function Method()
+    {
         return $this->request['method'];
     }
 
@@ -56,7 +57,8 @@ class PactInteraction
         return $this;
     }
 
-    public function Path(){
+    public function Path()
+    {
         return $this->request['path'];
     }
 
@@ -74,7 +76,8 @@ class PactInteraction
         return $this;
     }
 
-    public function Query(){
+    public function Query()
+    {
         return $this->request['query'];
     }
 
@@ -84,13 +87,37 @@ class PactInteraction
         return $this;
     }
 
-    public function Headers(){
-        return $this->request['headers'];
+    public function Headers($headerType)
+    {
+        $header = "";
+        switch ($headerType) {
+            case REQUEST:
+                $header = $this->request['headers'];
+                break;
+            case RESPONSE:
+                $header = $this->response['headers'];
+                break;
+        }
+        return $header;
+    }
+
+    public function Body($bodyType)
+    {
+        $targetBody = "";
+        switch ($bodyType) {
+            case REQUEST:
+                $targetBody = $this->request['body'];
+                break;
+            case RESPONSE:
+                $targetBody = $this->response['body'];
+                break;
+        }
+        return $targetBody;
     }
 
     public function RequestHeaders($headers)
     {
-        if(!is_array($headers)){
+        if (!is_array($headers)) {
             throw new \InvalidArgumentException("Headers must be an associative array.");
         }
 
@@ -98,7 +125,44 @@ class PactInteraction
         return $this;
     }
 
-    public function ToArray(){
+    public function RequestBody($body)
+    {
+        $this->request['body'] = $body;
+        return $this;
+    }
+
+    public function Status()
+    {
+        return $this->response['status'];
+    }
+
+    public function ResponseStatus($code)
+    {
+        if (!is_int($code)) {
+            throw new \InvalidArgumentException("Status code must be an integer");
+        }
+        $this->response['status'] = $code;
+        return $this;
+    }
+
+    public function ResponseHeaders($headers)
+    {
+        if (!is_array($headers)) {
+            throw new \InvalidArgumentException("Headers must be an associative array.");
+        }
+
+        $this->response['headers'] = $headers;
+        return $this;
+    }
+
+    public function ResponseBody($body)
+    {
+        $this->response['body'] = $body;
+        return $this;
+    }
+
+    public function ToArray()
+    {
         $temp = get_object_vars($this);
         return $temp;
     }

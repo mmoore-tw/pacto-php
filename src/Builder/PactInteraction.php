@@ -98,4 +98,8 @@ class PactInteraction
         return $this;
     }
 
+    public function ToArray(){
+        $temp = get_object_vars($this);
+        return $temp;
+    }
 }

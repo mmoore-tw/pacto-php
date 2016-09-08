@@ -83,12 +83,21 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $filename = __DIR__ . "/test-pack.json";
 
+        $pi = (new PactInteraction())
+                        ->Description("Some description")
+                        ->ProviderState("Get an user with ID 239443")
+                        ->RequestMethod("GET")
+                        ->RequestHeaders(array("Content-Type" => "application/json"))
+                        ->RequestPath("/some/path");
+
         // Build the contract
         $pb = new PactBuilder();
         $pactJson = $pb->ServiceConsumer("blah")
                 ->HasPactWith("someProvider")
                 ->AddMetadata(array("pact-specification" => array("version" => "2.0.0")))
+                ->AddInteraction($pi)
                 ->Build($filename);
+
 
         // persist to file
         file_put_contents($filename, $pactJson);

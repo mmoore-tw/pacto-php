@@ -61,7 +61,6 @@ class PactBuilder implements PactBuilderInterface
 
     public function AddMetadata($newMetadata)
     {
-        // first value entered
         if (!isset($this->metadata)) {
             $this->metadata = $newMetadata;
         } else {
@@ -89,14 +88,19 @@ class PactBuilder implements PactBuilderInterface
 
     public function Build($fileName)
     {
-        $pactFile = json_encode(get_object_vars($this), JSON_PRETTY_PRINT);
+        $pactFile = json_encode(get_object_vars($this), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         return $pactFile;
     }
 
-    public function AddInteraction(PactInteraction $newInteraction){
+    public function AddInteraction(PactInteraction $newInteraction)
+    {
+        if (!isset($this->interactions)) {
+            $this->interactions = array($newInteraction->ToArray());
+        } else {
+            array_push($this->interactions, $newInteraction->ToArray());
+        }
 
-        $this->interactions += $newInteraction;
-
+        return $this;
     }
 
 }

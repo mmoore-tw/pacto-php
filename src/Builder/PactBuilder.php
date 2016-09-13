@@ -24,17 +24,29 @@ class PactBuilder implements PactBuilderInterface
         $metadata = array();
     }
 
-
+    /**
+     * Get the provider name
+     * @return mixed
+     */
     public function ProviderName()
     {
         return $this->provider["name"];
     }
 
+    /**
+     * Get the consumer name
+     * @return mixed
+     */
     public function ConsumerName()
     {
         return $this->consumer["name"];
     }
 
+    /**
+     * Set the consumer name
+     * @param string $consumerName name of entity making calls to provider
+     * @return PactBuilder
+     */
     public function ServiceConsumer($consumerName)
     {
         if (!is_string($consumerName) || $consumerName == "") {
@@ -47,6 +59,11 @@ class PactBuilder implements PactBuilderInterface
         return $this;
     }
 
+    /**
+     * Set the provider name
+     * @param string $providerName
+     * @return PactBuilder
+     */
     public function HasPactWith($providerName)
     {
         if (!is_string($providerName) || $providerName == "") {
@@ -59,6 +76,11 @@ class PactBuilder implements PactBuilderInterface
         return $this;
     }
 
+    /**
+     * Add Metadata to the contract
+     * @param $newMetadata
+     * @return $this
+     */
     public function AddMetadata($newMetadata)
     {
         if (!isset($this->metadata)) {
@@ -70,6 +92,10 @@ class PactBuilder implements PactBuilderInterface
         return $this;
     }
 
+    /**
+     * @param string $key target key to removed from dictionary
+     * @return PactBuilder
+     */
     public function RemoveMetadata($key)
     {
         if (isset($this->metadata[$key])) {
@@ -81,17 +107,30 @@ class PactBuilder implements PactBuilderInterface
         return $this;
     }
 
+    /**
+     * Get Metadata for contract
+     * @return mixed
+     */
     public function Metadata()
     {
         return $this->metadata;
     }
 
+    /**
+     *  Construct the contract
+     * @param string $fileName the path (and filename) where the contract will be stored.
+     * @return string JSON string of the contract
+     */
     public function Build($fileName)
     {
         $pactFile = json_encode(get_object_vars($this), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         return $pactFile;
     }
 
+    /**
+     * @param PactInteraction $newInteraction
+     * @return PactBuilder
+     */
     public function AddInteraction(PactInteraction $newInteraction)
     {
         if (!isset($this->interactions)) {

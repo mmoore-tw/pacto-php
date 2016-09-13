@@ -166,4 +166,23 @@ class PactInteraction
         $temp = get_object_vars($this);
         return $temp;
     }
+
+    public function Request()
+    {
+        return $this->request;
+    }
+
+    public function Response()
+    {
+        return $this->response;
+    }
+
+    public function SetRequest($request){
+        $this->request = $request;
+    }
+
+    public function SetResponse($response){
+        $this->response = $response;
+    }
+
 }

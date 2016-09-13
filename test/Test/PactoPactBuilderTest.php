@@ -1,5 +1,7 @@
 <?php
 
+namespace Pact\Phpacto\Test;
+
 use Pact\Phpacto\Builder\PactBuilder;
 use Pact\Phpacto\Builder\PactInteraction;
 
@@ -42,7 +44,6 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
         $pb->ServiceConsumer($consumerName);
     }
 
-
     /**
      * @expectedException InvalidArgumentException
      */
@@ -53,7 +54,6 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
         $pb->HasPactWith($providerName);
     }
 
-
     public function testCanAddMetadata()
     {
         $metadata = array("key1" => "value1");
@@ -62,6 +62,21 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($metadata, $pb->Metadata());
     }
+
+    public function testCanAddRemoveMetadata()
+        {
+            $metadata = array("key1" => "value1");
+            $pb = new PactBuilder();
+            $pb->AddMetadata($metadata);
+            $this->assertEquals($metadata, $pb->Metadata());
+
+            $pb->AddMetadata(array("key2" => "value2"));
+            $this->assertNotEquals($metadata, $pb->Metadata());
+
+            $pb->RemoveMetadata("key2");
+            $this->assertEquals($metadata, $pb->Metadata());
+
+        }
 
     public function testCanAppendMetadataOriginalValuesPersist()
     {
@@ -81,7 +96,7 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testCanBuildJsonContractAndWriteToFile()
     {
-        $filename = __DIR__ . "/test-pack.json";
+        $filename = __DIR__ . "/test-pact.json";
 
         $pi = (new PactInteraction())
                 ->Description("Some description")
@@ -175,4 +190,18 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
         $pi = (new PactInteraction())
                 ->ResponseHeaders($headers);
     }
+
+    public function PactInteractionRequestPathStartsWithSlash(){
+
+
+    }
+
+    public function CanCreateCustomRequest(){
+
+    }
+
+    public function CanCreateCustomResponse(){
+
+}
+
 }

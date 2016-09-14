@@ -2,13 +2,20 @@
 
 namespace Pact\Phpacto\Service;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
 use Pact\Phpacto\Builder\PactBuilder;
 use Pact\Phpacto\Builder\PactInteraction;
-use Slim\App;
 
+use Slim\App;
+use Slim\Http\Request;
+use Slim\Http\RequestBody;
+use Slim\Http\Response;
+use Slim\Http\Environment;
+use Slim\Http\Uri;
+use Slim\Http\Headers;
+
+
+define("PACT_SPEC_VERSION", "2.0.0");
+define("PACTO_PHP_VERSION", "0.1.5");
 
 /**
  * Mock Service that implements a local web server to which calls can be directed
@@ -19,11 +26,10 @@ class PactProviderService
     private $contractFolder;
     private $uri;
     private $pactBuilder;
-    private $app;
     private $interaction;
 
 
-    public function __construct($contractFolder, $uri = "http://127.0.0.1")
+    public function __construct($contractFolder, $uri = "http://127.0.0.1:8880")
     {
         $this->contractFolder = $contractFolder;
         $this->uri = $uri;
@@ -31,12 +37,11 @@ class PactProviderService
         $this->pactBuilder = new PactBuilder();
         $this->pactBuilder->AddMetadata(
                 array(
-                        "pact-specification" => array("version" => "2.0.0"),
-                        "pact-php" => array("version" => "0.1.2")
+                        "pact-specification" => array("version" => PACT_SPEC_VERSION),
+                        "pact-php" => array("version" => PACTO_PHP_VERSION)
                 )
         );
 
-        $this->app = new App();
     }
 
     public function ServiceConsumer($consumerName)
@@ -87,37 +92,87 @@ class PactProviderService
     {
         $this->interaction->SetResponse($response);
         $this->pactBuilder->AddInteraction($this->interaction);
-        unset($this->interaction);
-        return $this;
     }
 
     public function Start()
     {
-        $this->app->get(
-                "/some/path",
-                function () {
-                    return $this->app->response->getBody()->write(json_encode("Hello World"));
-                }
+        // create the app with the appropriate route
+        $app = new App();
+        $int = $this->interaction;
+        switch ($int->Method()) {
+            case "get":
+                $app->get(
+                        $int->Path(),
+                        function (Request $req, Response $res) use ($int) {
+
+                            $res->withJson($int->Body(RESPONSE), $int->Status());
+
+                            foreach ($int->Headers(RESPONSE) as $key => $value) {
+                                $res->withHeader($key, $value);
+                            }
+
+                            return $res;
+                        }
+                );
+                break;
+            case "post":
+                break;
+            default:
+        }
+
+        // setup the request and make the call
+        $env = Environment::mock(
+                [
+                        'REQUEST_URI' => sprintf("%s%s", $this->uri, $this->interaction->Path()),
+                        'REQUEST_METHOD' => $this->interaction->Method(),
+                        'HTTP_USER_AGENT' => sprintf('Pacto-Php %s', PACTO_PHP_VERSION)
+                ]
         );
 
-        $this->app->run();
+        $uri = Uri::createFromEnvironment($env);
 
+        $headers = new Headers();
+        foreach ($this->interaction->Headers(REQUEST) as $key => $value) {
+            $headers->add($key, $value);
+        }
+
+        $cookies = [];
+        $serverParams = $env->all();
+
+        $body = new RequestBody();
+        if($this->interaction->Method() != "get"){
+           $body->write(json_encode($this->interaction->Body(REQUEST)));
+        }
+
+        $req = new Request($this->interaction->Method(), $uri, $headers, $cookies, $serverParams, $body);
+        $res = new Response();
+
+        // Invoke app
+        $resOut = $app($req, $res);
+        return $resOut;
     }
 
     public function Stop()
     {
-        // reset the applicaiton
-        $this->app = null;
+        // reset the interaction
+        unset($this->interaction);
     }
 
     public function WriteContract($filename = "consumer-provider.json")
     {
+        $pact = $this->pactBuilder->Build();
+
         $filename = !is_null($this->pactBuilder) ? sprintf(
-                "%s-%s.json",
+                "%s/%s-%s.json",
+                $this->contractFolder,
                 $this->pactBuilder->ConsumerName(),
                 $this->pactBuilder->ProviderName()
         ) : $filename;
-        $pact = $this->pactBuilder->Build(sprintf("%s/%s", $this->contractFolder, $filename));
+
+        if (!is_dir($this->contractFolder)) {
+          mkdir($this->contractFolder, 0777, true);
+        }
+
         file_put_contents($filename, $pact);
     }
 

@@ -55,10 +55,9 @@ interface PactBuilderInterface {
 
     /**
      *  Construct the contract
-     * @param string $fileName the path (and filename) where the contract will be stored.
      * @return string JSON string of the contract
      */
-    public function Build($fileName);
+    public function Build();
 
     /**
      * @param PactInteraction $newInteraction

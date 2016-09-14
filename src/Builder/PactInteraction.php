@@ -15,7 +15,6 @@ class PactInteraction
     private $providerState;
     private $request;
     private $response;
-    private $matchingRules;
 
     public function __construct()
     {
@@ -111,6 +110,8 @@ class PactInteraction
             case RESPONSE:
                 $targetBody = $this->response['body'];
                 break;
+            default:
+                $targetBody = null;
         }
         return $targetBody;
     }

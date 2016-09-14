@@ -118,10 +118,9 @@ class PactBuilder implements PactBuilderInterface
 
     /**
      *  Construct the contract
-     * @param string $fileName the path (and filename) where the contract will be stored.
      * @return string JSON string of the contract
      */
-    public function Build($fileName)
+    public function Build()
     {
         $pactFile = json_encode(get_object_vars($this), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         return $pactFile;

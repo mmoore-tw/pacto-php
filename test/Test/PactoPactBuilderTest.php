@@ -114,7 +114,7 @@ class PactoPactBuilderTest extends \PHPUnit_Framework_TestCase
                 ->HasPactWith("someProvider")
                 ->AddMetadata(array("pact-specification" => array("version" => "2.0.0")))
                 ->AddInteraction($pi)
-                ->Build($filename);
+                ->Build();
 
 
         // persist to file

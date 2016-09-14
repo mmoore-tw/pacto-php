@@ -14,13 +14,18 @@ define("DEFAULT_CONSUMER_CONTRACTS", __DIR__ . "/consumer-contracts");
 class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
 {
 
-    public $svc;
+    private static $providerService;
+    private $svc;
 
     /**
      * @beforeClass
      */
     public static function setUpTestFixture()
     {
+        if (is_null(self::$providerService)) {
+            self::$providerService = new PactProviderService(DEFAULT_CONSUMER_CONTRACTS);
+            self::$providerService->ServiceConsumer("monolith")->HasPactWith("Street-Fighter");
+        }
     }
 
     /**
@@ -28,21 +33,20 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
      */
     public static function tearDownTestFixture()
     {
-
+        self::$providerService->WriteContract();
     }
 
     public function setUp()
     {
-        if (is_null($this->svc)) {
-            $this->svc = new PactProviderService(DEFAULT_CONSUMER_CONTRACTS);
-            $this->svc->ServiceConsumer("monolith")->HasPactWith("Street-Fighter");
+        if (!is_null(self::$providerService)) {
+            $this->svc = self::$providerService;
         }
+
     }
 
     public function tearDown()
     {
         $this->svc->Stop();
-        $this->svc->WriteContract(); //TODO: Need to perform at end of all interactions, not every test
     }
 
 

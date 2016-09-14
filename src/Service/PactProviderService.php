@@ -15,7 +15,7 @@ use Slim\Http\Headers;
 
 
 define("PACT_SPEC_VERSION", "2.0.0");
-define("PACTO_PHP_VERSION", "0.1.5");
+define("PACTO_PHP_VERSION", "0.1.4");
 
 /**
  * Mock Service that implements a local web server to which calls can be directed

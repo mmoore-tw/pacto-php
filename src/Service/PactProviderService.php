@@ -7,7 +7,7 @@ use Pact\Phpacto\Builder\PactInteraction;
 
 use Slim\App;
 use Slim\Http\Request;
-use Slim\Http\RequestBody;
+use Slim\Http\Body;
 use Slim\Http\Response;
 use Slim\Http\Environment;
 use Slim\Http\Uri;
@@ -41,7 +41,6 @@ class PactProviderService
                         "pact-php" => array("version" => PACTO_PHP_VERSION)
                 )
         );
-
     }
 
     public function ServiceConsumer($consumerName)
@@ -120,16 +119,21 @@ class PactProviderService
             default:
         }
 
+        $uri = Uri::createFromString(sprintf("%s%s", $this->uri, $this->interaction->Path()));
+
         // setup the request and make the call
         $env = Environment::mock(
                 [
-                        'REQUEST_URI' => sprintf("%s%s", $this->uri, $this->interaction->Path()),
+                        'REQUEST_URI' => (string)$uri,
+                        'SERVER_NAME' => $uri->getHost(),
+                        'SERVER_PORT' => $uri->getPort(),
+                        'HTTP_HOST' => $uri->getHost(),
+                        'REMOTE_ADDR' => $uri->getHost(),
                         'REQUEST_METHOD' => $this->interaction->Method(),
                         'HTTP_USER_AGENT' => sprintf('Pacto-Php %s', PACTO_PHP_VERSION)
                 ]
         );
 
-        $uri = Uri::createFromEnvironment($env);
 
         $headers = new Headers();
         foreach ($this->interaction->Headers(REQUEST) as $key => $value) {
@@ -139,9 +143,10 @@ class PactProviderService
         $cookies = [];
         $serverParams = $env->all();
 
-        $body = new RequestBody();
-        if($this->interaction->Method() != "get"){
-           $body->write(json_encode($this->interaction->Body(REQUEST)));
+
+        $body = new Body(fopen('php://temp', 'r+'));
+        if ($this->interaction->Method() != "get") {
+            $body->write(json_encode($this->interaction->Body(REQUEST)));
         }
 
         $req = new Request($this->interaction->Method(), $uri, $headers, $cookies, $serverParams, $body);
@@ -170,7 +175,7 @@ class PactProviderService
         ) : $filename;
 
         if (!is_dir($this->contractFolder)) {
-          mkdir($this->contractFolder, 0777, true);
+            mkdir($this->contractFolder, 0777, true);
         }
 
         file_put_contents($filename, $pact);

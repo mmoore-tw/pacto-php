@@ -2,7 +2,7 @@
     "name": "mmoore-tw/pacto-php",
     "description": "translate pacto consumer description to psr7 request",
     "require": {
-        "psr/http-message": "1.0.1",
+        "psr/http-message": "1.0.1 as 1.0",
         "symfony/finder": "2.8.2",
         "symfony/http-foundation": "2.8.2 as dev-master",
         "symfony/yaml": "2.8.2 as dev-master",

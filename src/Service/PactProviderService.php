@@ -5,13 +5,15 @@ namespace Pact\Phpacto\Service;
 use Pact\Phpacto\Builder\PactBuilder;
 use Pact\Phpacto\Builder\PactInteraction;
 
-use Slim\App;
+use Slim\Slim;
 use Slim\Http\Request;
-use Slim\Http\Body;
-use Slim\Http\Response;
-use Slim\Http\Environment;
-use Slim\Http\Uri;
+
+//use Slim\Http\Body;
+//use Slim\Http\Response;
+use Slim\Environment;
+//use Slim\Uri;
 use Slim\Http\Headers;
+use Pact\Phpacto\Service\App;
 
 
 define("PACT_SPEC_VERSION", "2.0.0");
@@ -93,68 +95,35 @@ class PactProviderService
         $this->pactBuilder->AddInteraction($this->interaction);
     }
 
+
+    /**
+     * @return \Slim\Http\Response
+     */
     public function Start()
     {
         // create the app with the appropriate route
-        $app = new App();
+        $app = new MockProvider();
+
         $int = $this->interaction;
-        switch ($int->Method()) {
-            case "get":
-                $app->get(
-                        $int->Path(),
-                        function (Request $req, Response $res) use ($int) {
+        $app->map(
+                $int->Path(),
+                function () use ($int, $app) {
+                    $app->response->headers->replace($int->Headers(RESPONSE));
+                    echo json_encode($int->Body(RESPONSE));
+                }
 
-                            $res->withJson($int->Body(RESPONSE), $int->Status());
+        )->via("GET", "POST", "PUT", "DELETE", "OPTIONS");
 
-                            foreach ($int->Headers(RESPONSE) as $key => $value) {
-                                $res->withHeader($key, $value);
-                            }
-
-                            return $res;
-                        }
-                );
-                break;
-            case "post":
-                break;
-            default:
-        }
-
-        $uri = Uri::createFromString(sprintf("%s%s", $this->uri, $this->interaction->Path()));
-
-        // setup the request and make the call
-        $env = Environment::mock(
+        Environment::mock(
                 [
-                        'REQUEST_URI' => (string)$uri,
-                        'SERVER_NAME' => $uri->getHost(),
-                        'SERVER_PORT' => $uri->getPort(),
-                        'HTTP_HOST' => $uri->getHost(),
-                        'REMOTE_ADDR' => $uri->getHost(),
-                        'REQUEST_METHOD' => $this->interaction->Method(),
-                        'HTTP_USER_AGENT' => sprintf('Pacto-Php %s', PACTO_PHP_VERSION)
+                        'PATH_INFO' => $this->interaction->Path(),
+                        'HTTP_USER_AGENT' => sprintf('Pacto-Php %s', PACTO_PHP_VERSION),
+                        'USER_AGENT' => sprintf('Pacto-Php %s', PACTO_PHP_VERSION)
                 ]
         );
 
-
-        $headers = new Headers();
-        foreach ($this->interaction->Headers(REQUEST) as $key => $value) {
-            $headers->add($key, $value);
-        }
-
-        $cookies = [];
-        $serverParams = $env->all();
-
-
-        $body = new Body(fopen('php://temp', 'r+'));
-        if ($this->interaction->Method() != "get") {
-            $body->write(json_encode($this->interaction->Body(REQUEST)));
-        }
-
-        $req = new Request($this->interaction->Method(), $uri, $headers, $cookies, $serverParams, $body);
-        $res = new Response();
-
-        // Invoke app
-        $resOut = $app($req, $res);
-        return $resOut;
+        $response = $app->invoke();
+        return $response;
     }
 
     public function Stop()

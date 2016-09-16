@@ -2,8 +2,8 @@
 
 namespace Pact\Phpacto\Test;
 
+use Pact\Phpacto\Service\MockProvider;
 use Pact\Phpacto\Service\PactProviderService;
-use Pact\Phpacto\Builder\PactInteraction;
 
 
 define("DEFAULT_CONSUMER_CONTRACTS", __DIR__ . "/consumer-contracts");
@@ -41,7 +41,6 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
         if (!is_null(self::$providerService)) {
             $this->svc = self::$providerService;
         }
-
     }
 
     public function tearDown()
@@ -78,6 +77,8 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
         // Assert
         $actualResponseBody = json_decode((string)$actualResponse->getBody(), true);
         $this->assertEquals($expectedResponse['body'], $actualResponseBody);
+        $this->assertEquals($expectedResponse['status'], $actualResponse->getStatus());
+        $this->assertEquals($expectedResponse['headers'], $actualResponse->headers()->all());
     }
 
 }

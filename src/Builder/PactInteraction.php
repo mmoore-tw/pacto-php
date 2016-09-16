@@ -52,7 +52,7 @@ class PactInteraction
             throw new \InvalidArgumentException("method cannot be empty");
         }
 
-        $this->request['method'] = $method;
+        $this->request['method'] = strtoupper($method);
         return $this;
     }
 

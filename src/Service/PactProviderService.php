@@ -4,20 +4,11 @@ namespace Pact\Phpacto\Service;
 
 use Pact\Phpacto\Builder\PactBuilder;
 use Pact\Phpacto\Builder\PactInteraction;
+use Pact\Phpacto\Config\Constants;
 
-use Slim\Slim;
-use Slim\Http\Request;
-
-//use Slim\Http\Body;
-//use Slim\Http\Response;
 use Slim\Environment;
-//use Slim\Uri;
-use Slim\Http\Headers;
 use Pact\Phpacto\Service\App;
 
-
-define("PACT_SPEC_VERSION", "2.0.0");
-define("PACTO_PHP_VERSION", "0.1.4");
 
 /**
  * Mock Service that implements a local web server to which calls can be directed
@@ -39,8 +30,8 @@ class PactProviderService
         $this->pactBuilder = new PactBuilder();
         $this->pactBuilder->AddMetadata(
                 array(
-                        "pact-specification" => array("version" => PACT_SPEC_VERSION),
-                        "pact-php" => array("version" => PACTO_PHP_VERSION)
+                        "pact-specification" => array("version" => Constants::PACT_SPEC_VERSION),
+                        "pact-php" => array("version" => Constants::PACTO_PHP_VERSION)
                 )
         );
     }
@@ -108,8 +99,13 @@ class PactProviderService
         $app->map(
                 $int->Path(),
                 function () use ($int, $app) {
-                    $app->response->headers->replace($int->Headers(RESPONSE));
-                    echo json_encode($int->Body(RESPONSE));
+                    if (array_key_exists("headers", $int->Response()))
+                        $app->response->headers->replace($int->Headers(RESPONSE));
+                    else
+                        $app->response->headers->clear();
+
+                    if (array_key_exists("body", $int->Response()))
+                        echo json_encode($int->Body(RESPONSE));
                 }
 
         )->via("GET", "POST", "PUT", "DELETE", "OPTIONS");
@@ -117,8 +113,8 @@ class PactProviderService
         Environment::mock(
                 [
                         'PATH_INFO' => $this->interaction->Path(),
-                        'HTTP_USER_AGENT' => sprintf('Pacto-Php %s', PACTO_PHP_VERSION),
-                        'USER_AGENT' => sprintf('Pacto-Php %s', PACTO_PHP_VERSION)
+                        'HTTP_USER_AGENT' => sprintf('Pacto-Php %s', Constants::PACTO_PHP_VERSION),
+                        'USER_AGENT' => sprintf('Pacto-Php %s', Constants::PACTO_PHP_VERSION)
                 ]
         );
 
@@ -129,7 +125,7 @@ class PactProviderService
     public function Stop()
     {
         // reset the interaction
-        unset($this->interaction);
+        $this->interaction = null;
     }
 
     public function WriteContract($filename = "consumer-provider.json")

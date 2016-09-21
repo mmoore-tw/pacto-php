@@ -2,7 +2,6 @@
 
 namespace Pact\Phpacto\Test;
 
-use Pact\Phpacto\Service\MockProvider;
 use Pact\Phpacto\Service\PactProviderService;
 
 
@@ -24,7 +23,7 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
     {
         if (is_null(self::$providerService)) {
             self::$providerService = new PactProviderService(DEFAULT_CONSUMER_CONTRACTS);
-            self::$providerService->ServiceConsumer("monolith")->HasPactWith("Street-Fighter");
+            self::$providerService->ServiceConsumer("service_A")->HasPactWith("service_B");
         }
     }
 
@@ -80,5 +79,59 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResponse['status'], $actualResponse->getStatus());
         $this->assertEquals($expectedResponse['headers'], $actualResponse->headers()->all());
     }
+
+    public function testAllowCustomResponseToHaveNoHeaderWhenReturned()
+    {
+
+        // Arrange
+        $this->svc
+                ->Given("some provider state")
+                ->UponReceiving("some description of the interaction")
+                ->With(
+                        array(
+                            "method" => "get",
+                            "path" => "/some/path"
+                        )
+                )
+                ->WillRespond(
+                        array(
+                            "status" => 200,
+                            "body" => "The quick brown fox..."
+                        )
+                );
+
+        // Act
+        $actualResponse = $this->svc->Start();
+
+        // Assert
+        $this->assertEquals($actualResponse->headers()->all(), array() );
+    }
+
+
+    public function testAllowCustomResponseToHaveNoBodyWhenReturned()
+        {
+
+            // Arrange
+            $this->svc
+                    ->Given("some provider state")
+                    ->UponReceiving("some description of the interaction")
+                    ->With(
+                            array(
+                                "method" => "get",
+                                "path" => "/some/path"
+                            )
+                    )
+                    ->WillRespond(
+                            array(
+                                "status" => 200
+                            )
+                    );
+
+            // Act
+            $actualResponse = $this->svc->Start();
+
+            // Assert
+            $this->assertEquals($actualResponse->getBody(), "");
+        }
 
 }

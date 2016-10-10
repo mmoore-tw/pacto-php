@@ -43,6 +43,7 @@ class PactList
 
     /**
      * @param $description
+     *
      * @return Pact[]
      */
     public function filterPactsByDescription($description)
@@ -54,6 +55,7 @@ class PactList
 
     /**
      * @param $providerState
+     *
      * @return Pact[]
      */
     public function filterPactsByProviderState($providerState)
@@ -65,11 +67,12 @@ class PactList
 
     /**
      * @param $providerState
+     *
      * @return Pact[]
      */
     public function filterPactsByDescrioptionAndProviderState($description, $providerState)
     {
-        return array_filter($this->all(), function (Pact $p) use ($description,$providerState) {
+        return array_filter($this->all(), function (Pact $p) use ($description, $providerState) {
             return strtolower($p->getProviderState()) == strtolower($providerState)
             && strtolower($p->getDescription()) == strtolower($description);
         });

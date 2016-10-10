@@ -4,7 +4,6 @@ namespace Pact\Phpacto\Test\Output;
 
 use Pact\Phpacto\Diff\Diff;
 use Pact\Phpacto\Pact\Pact;
-use SebastianBergmann\Exporter\Exporter;
 
 class MismatchDiffOutput
 {
@@ -18,15 +17,15 @@ class MismatchDiffOutput
     public function getOutputFor(Diff $diff, Pact $pact)
     {
         $mismatches = $diff->getMismatches();
-        $output = $pact->getDescription() . "\n" . $pact->getProviderState();
+        $output = $pact->getDescription()."\n".$pact->getProviderState()."\n".$pact->getRequest()->getMethod().' '.$pact->getRequest()->getUri()."\n";
         $errors = 0;
 
         foreach ($mismatches as $mismatch) {
-            $errors++;
+            ++$errors;
 
             $output .= sprintf(
                 "\n Error# %s: \n Location: %s \n Error: %s \n",
-                $errors, $mismatch->getLocation(), $mismatch
+                $errors, $mismatch->getLocation(), $mismatch->getMessage()
             );
         }
 

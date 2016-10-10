@@ -35,14 +35,15 @@ class Diff
     /**
      * @return Diff
      */
-    public function merge()
+    public static function merge()
     {
         $mismatches = [];
 
+        /** @var Diff $diff */
         foreach (func_get_args() as $diff) {
-            $mismatches = array_merge($mismatches, $diff->getMismatches());
+            $mismatches[] = $diff->getMismatches();
         }
 
-        return new Diff(array_merge($this->mismatches, $mismatches));
+        return new self(call_user_func_array('array_merge', $mismatches));
     }
 }

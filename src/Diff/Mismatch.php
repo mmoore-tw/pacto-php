@@ -4,34 +4,41 @@ namespace Pact\Phpacto\Diff;
 
 class Mismatch
 {
-    private $mismatchType;
-    private $mismatchAt;
-    private $mismatchMessage;
+    private $type;
+    private $location;
+    private $message;
 
-    private $expected;
-    private $received;
-
-    public function __construct($mismatchAt, $mismatchType, array $mismatchArgs = [])
+    public function __construct($location, $type, array $args = [])
     {
-        $this->mismatchType = $mismatchType;
-        $this->mismatchAt = $mismatchAt;
-        $this->mismatchMessage = vsprintf($mismatchType, $mismatchArgs);
+        $this->type = $type;
+        $this->location = $location;
+
+        foreach ($args as &$arg) {
+            if (is_string($arg)) {
+                $arg = '"'.$arg.'"';
+            }
+        }
+
+        $this->message = vsprintf($type, $args);
     }
 
-    public function getMismatchType()
+    public function getType()
     {
-        return $this->mismatchType;
+        return $this->type;
     }
 
     public function getLocation()
     {
-        return $this->mismatchAt;
+        return $this->location;
+    }
+
+    public function getMessage()
+    {
+        return $this->message;
     }
 
     public function __toString()
     {
-        return sprintf(
-            "mismatch at %s: %s", $this->mismatchAt, $this->mismatchMessage
-        );
+        return $this->getMessage();
     }
 }

@@ -5,46 +5,43 @@ namespace Pact\Phpacto\Service;
 use Pact\Phpacto\Builder\PactBuilder;
 use Pact\Phpacto\Builder\PactInteraction;
 use Pact\Phpacto\Config\Constants;
-
 use Slim\Environment;
-use Pact\Phpacto\Service\App;
-
 
 /**
- * Mock Service that implements a local web server to which calls can be directed
+ * Mock Service that implements a local web server to which calls can be directed.
  */
 class PactProviderService
 {
-
     private $contractFolder;
     private $uri;
     private $pactBuilder;
     private $interaction;
 
-
-    public function __construct($contractFolder, $uri = "http://127.0.0.1:8880")
+    public function __construct($contractFolder, $uri = 'http://127.0.0.1:8880')
     {
         $this->contractFolder = $contractFolder;
         $this->uri = $uri;
 
         $this->pactBuilder = new PactBuilder();
         $this->pactBuilder->AddMetadata(
-                array(
-                        "pact-specification" => array("version" => Constants::PACT_SPEC_VERSION),
-                        "pact-php" => array("version" => Constants::PACTO_PHP_VERSION)
-                )
+                [
+                        'pact-specification' => ['version' => Constants::PACT_SPEC_VERSION],
+                        'pact-php' => ['version' => Constants::PACTO_PHP_VERSION],
+                ]
         );
     }
 
     public function ServiceConsumer($consumerName)
     {
         $this->pactBuilder->ServiceConsumer($consumerName);
+
         return $this;
     }
 
     public function HasPactWith($providerName)
     {
         $this->pactBuilder->HasPactWith($providerName);
+
         return $this;
     }
 
@@ -65,18 +62,21 @@ class PactProviderService
         }
 
         $this->interaction->ProviderState($providerState);
+
         return $this;
     }
 
     public function With(array $request)
     {
         $this->interaction->SetRequest($request);
+
         return $this;
     }
 
     public function UponReceiving($description)
     {
         $this->interaction->Description($description);
+
         return $this;
     }
 
@@ -85,7 +85,6 @@ class PactProviderService
         $this->interaction->SetResponse($response);
         $this->pactBuilder->AddInteraction($this->interaction);
     }
-
 
     /**
      * @return \Slim\Http\Response
@@ -99,26 +98,29 @@ class PactProviderService
         $app->map(
                 $int->Path(),
                 function () use ($int, $app) {
-                    if (array_key_exists("headers", $int->Response()))
+                    if (array_key_exists('headers', $int->Response())) {
                         $app->response->headers->replace($int->Headers(RESPONSE));
-                    else
+                    } else {
                         $app->response->headers->clear();
+                    }
 
-                    if (array_key_exists("body", $int->Response()))
+                    if (array_key_exists('body', $int->Response())) {
                         echo json_encode($int->Body(RESPONSE));
+                    }
                 }
 
-        )->via("GET", "POST", "PUT", "DELETE", "OPTIONS");
+        )->via('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS');
 
         Environment::mock(
                 [
                         'PATH_INFO' => $this->interaction->Path(),
                         'HTTP_USER_AGENT' => sprintf('Pacto-Php %s', Constants::PACTO_PHP_VERSION),
-                        'USER_AGENT' => sprintf('Pacto-Php %s', Constants::PACTO_PHP_VERSION)
+                        'USER_AGENT' => sprintf('Pacto-Php %s', Constants::PACTO_PHP_VERSION),
                 ]
         );
 
         $response = $app->invoke();
+
         return $response;
     }
 
@@ -128,12 +130,12 @@ class PactProviderService
         $this->interaction = null;
     }
 
-    public function WriteContract($filename = "consumer-provider.json")
+    public function WriteContract($filename = 'consumer-provider.json')
     {
         $pact = $this->pactBuilder->Build();
 
         $filename = !is_null($this->pactBuilder) ? sprintf(
-                "%s/%s-%s.json",
+                '%s/%s-%s.json',
                 $this->contractFolder,
                 $this->pactBuilder->ConsumerName(),
                 $this->pactBuilder->ProviderName()
@@ -145,6 +147,4 @@ class PactProviderService
 
         file_put_contents($filename, $pact);
     }
-
-
 }

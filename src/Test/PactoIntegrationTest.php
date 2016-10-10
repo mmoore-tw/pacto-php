@@ -10,7 +10,7 @@ use Symfony\Component\Finder\Finder;
 class PactoIntegrationTest
 {
     /** @var  PactList[] */
-    private $contracts;
+    public $contracts;
     private $providerName;
     private $strict;
 
@@ -25,7 +25,7 @@ class PactoIntegrationTest
         $this->checkIfFolderContainsFiles($folder);
 
         $finder = new Finder();
-        $finder->files()->in($folder);
+        $finder->files()->in($folder)->depth(0)->name('*.json');
 
         $contractFactory = PactListFactory::getPactoListFactory();
 
@@ -36,8 +36,8 @@ class PactoIntegrationTest
 
     /**
      * @param \Closure $makeRequest How make a ps7Request
-     * @param \Closure $loadState Setup the test state
-     * @param \Closure $down Setup up back the state
+     * @param \Closure $loadState   Setup the test state
+     * @param \Closure $down        Setup up back the state
      */
     public function honorContracts(\Closure $makeRequest, \Closure $loadState, \Closure $down)
     {
@@ -52,7 +52,7 @@ class PactoIntegrationTest
 
         foreach ($this->getAllPactsInContracts($contracts) as $pact) {
             $t = new PactoInstanceTest(
-               "testItHonorContract",
+               'testItHonorContract',
                $down,
                $loadState,
                $makeRequest,
@@ -63,7 +63,7 @@ class PactoIntegrationTest
             $suite->addTest($t);
         }
 
-        $result = $runner->run($suite, ['colors' => false]);
+        $result = $runner->run($suite, ['colors' => 'never', 'backupGlobals' => false, 'backupStaticAttributes' => false]);
 
         $errors = $result->errors();
         $failures = $result->failures();
@@ -75,6 +75,7 @@ class PactoIntegrationTest
 
     /**
      * @param $contracts
+     *
      * @return Pact[]
      */
     private function getAllPactsInContracts($contracts)
@@ -89,6 +90,7 @@ class PactoIntegrationTest
 
     /**
      * @param $providerName
+     *
      * @return PactList[]
      */
     public function getContractsFor($providerName)

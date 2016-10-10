@@ -15,8 +15,8 @@ class PactListFactory implements ContractFactoryInterface
 
     public function __construct(
         PactoRequestFactoryInterface $pactoRequestFactory,
-        PactoResponseFactoryInterface $pactoResponseFactory)
-    {
+        PactoResponseFactoryInterface $pactoResponseFactory
+    ) {
         $this->pactoRequestFactory = $pactoRequestFactory;
         $this->pactoResponseFactory = $pactoResponseFactory;
     }

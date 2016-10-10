@@ -3,11 +3,9 @@
 namespace Pact\Phpacto\Factory\Pacto;
 
 use Pact\Phpacto\Fixture;
-use Zend\Diactoros\Response\Serializer;
 
 class PactoResponseFactoryTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testItShouldReturnsAPsr7Response()
     {
         $factoryRequest = new PactoResponseFactory();
@@ -22,6 +20,7 @@ class PactoResponseFactoryTest extends \PHPUnit_Framework_TestCase
     private function getResponseArray()
     {
         $content = json_decode(Fixture::load('hello_world.json'), true);
+
         return $content['interactions'][0]['response'];
     }
 }

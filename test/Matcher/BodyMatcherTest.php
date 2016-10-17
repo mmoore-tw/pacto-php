@@ -2,8 +2,6 @@
 
 namespace Pact\Phpacto\Matcher;
 
-use Pact\Phpacto\Diff\Mismatch;
-use Pact\Phpacto\Diff\MismatchType;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Stream;
 
@@ -17,46 +15,159 @@ class BodyMatcherTest extends \PHPUnit_Framework_TestCase
         $this->bodyMatcher = new BodyMatcher();
     }
 
-    public function testItShouldReturnsNoDiffIfBodiesAreEquals()
+    public function testItShouldReturnsNoDiffIfBodiesAreEqualsStrings()
     {
         $stream = new Stream('php://memory', 'w');
-        $stream->write(json_encode(['a' => 1, 'b' => 'bella']));
+        $stream->write('String');
 
-        $messageOne = (new Request())
+        $expected = (new Request())
             ->withBody($stream);
 
-        $streamTwo = new Stream('php://memory', 'w');
-        $streamTwo->write(json_encode(['a' => 1, 'b' => 'bella']));
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write('String');
 
-        $messageTwo = (new Request())
-            ->withBody($streamTwo);
+        $actual = (new Request())
+            ->withBody($streamActual);
 
-
-        $diff = $this->bodyMatcher->match($messageOne, $messageTwo);
+        $diff = $this->bodyMatcher->match($expected, $actual);
         $this->assertCount(0, $diff->getMismatches());
     }
 
-    public function testItShouldReturnsDiffIfBodiesAreNotEquals()
+    public function testItShouldReturnsDiffIfBodiesAreDifferentStrings()
     {
         $stream = new Stream('php://memory', 'w');
-        $stream->write(json_encode(['a' => 1, 'b' => 'bella', 'c' => 'u']));
+        $stream->write(json_encode('String'));
 
-        $messageOne = (new Request())
+        $expected = (new Request())
             ->withBody($stream);
 
-        $streamTwo = new Stream('php://memory', 'w');
-        $streamTwo->write(json_encode(['a' => 1, 'b' => 'bella']));
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write(json_encode('Another string'));
 
-        $messageTwo = (new Request())
-            ->withBody($streamTwo);
+        $actual = (new Request())
+            ->withBody($streamActual);
 
-
-        $diff = $this->bodyMatcher->match($messageOne, $messageTwo);
+        $diff = $this->bodyMatcher->match($expected, $actual);
         $this->assertCount(1, $diff->getMismatches());
 
-        $this->assertEquals(
-            $diff->getMismatches()[0],
-            new Mismatch(BodyMatcher::LOCATION, MismatchType::KEY_NOT_FOUND, ['c'])
-        );
+        $this->assertEquals('Body', $diff->getMismatches()[0]->getLocation());
+    }
+
+    public function testCompareStringWithArray()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write(json_encode('String'));
+
+        $expected = (new Request())
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write(json_encode(['A' => 1]));
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(1, $diff->getMismatches());
+
+        $this->assertEquals('Body', $diff->getMismatches()[0]->getLocation());
+    }
+
+    public function testCompareArrayWithString()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write(json_encode(['A' => 1]));
+
+        $expected = (new Request())
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write(json_encode('String'));
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(1, $diff->getMismatches());
+
+        $this->assertEquals('Body', $diff->getMismatches()[0]->getLocation());
+    }
+
+    public function testItShouldReturnsNoDiffIfBodiesAreEqualArrays()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write(json_encode(['A' => 1]));
+
+        $expected = (new Request())
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write(json_encode(['A' => 1]));
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(0, $diff->getMismatches());
+    }
+
+    public function testItShouldReturnsDiffIfBodiesAreDifferentArrays()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write(json_encode(['A' => 1, 'B' => '2']));
+
+        $expected = (new Request())
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write(json_encode(['A' => 1]));
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(1, $diff->getMismatches());
+
+        $this->assertEquals('Body => "B"', $diff->getMismatches()[0]->getLocation());
+    }
+
+    public function testWithCollectionOfObjectsInBody()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write(json_encode([['A' => 1]]));
+
+        $expected = (new Request())
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write(json_encode([[]]));
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(1, $diff->getMismatches());
+
+        $this->assertEquals('Body => 0 => "A"', $diff->getMismatches()[0]->getLocation());
+    }
+
+    public function testWithNestedObjects()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write(json_encode(['level1' => ['level2' => ['A']]]));
+
+        $expected = (new Request())
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write(json_encode(['level1' => ['level2' => ['B']]]));
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(1, $diff->getMismatches());
+
+        $this->assertEquals('Body => "level1" => "level2" => 0', $diff->getMismatches()[0]->getLocation());
     }
 }

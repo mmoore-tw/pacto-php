@@ -5,13 +5,11 @@ namespace Pact\Phpacto\Service;
 use Slim\Slim;
 
 /**
- * Class MockProvider
- * @package Pact\Phpacto\Service
+ * Class MockProvider.
  */
 class MockProvider extends Slim
 {
-
-    public function __construct(array $userSettings = array())
+    public function __construct(array $userSettings = [])
     {
         parent::__construct($userSettings);
     }
@@ -20,7 +18,7 @@ class MockProvider extends Slim
     {
         $this->middleware[0]->call();
         $this->response()->finalize();
+
         return $this->response();
     }
-
 }

@@ -8,6 +8,7 @@ interface PactoRequestFactoryInterface
 {
     /**
      * @param $requestArray
+     *
      * @return RequestInterface
      */
     public function from($requestArray);

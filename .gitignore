@@ -1,3 +1,6 @@
+test/Test/consumer-contracts/
+test/Test/test-pact.json
+composer.lock
 vendor/
 .idea
 .iml

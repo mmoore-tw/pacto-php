@@ -6,7 +6,6 @@ use Pact\Phpacto\Fixture;
 
 class PactoRequestFactoryTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testItShouldReturnsAPsr7Request()
     {
         $factoryRequest = new PactoRequestFactory();
@@ -20,6 +19,7 @@ class PactoRequestFactoryTest extends \PHPUnit_Framework_TestCase
     private function getRequestArray()
     {
         $content = json_decode(Fixture::load('hello_world.json'), true);
+
         return $content['interactions'][0]['request'];
     }
 }

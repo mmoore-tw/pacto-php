@@ -2,13 +2,13 @@
 
 namespace Pact\Phpacto\Test;
 
+use Pact\Phpacto\Diff\Diff;
 use Pact\Phpacto\Matcher\BodyMatcher;
 use Pact\Phpacto\Matcher\HeadersMatcher;
 use Pact\Phpacto\Matcher\StatusCodeMatcher;
 use Pact\Phpacto\Pact\Pact;
 use Pact\Phpacto\Test\Output\MismatchDiffOutput;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
 class PactoInstanceTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,8 +16,9 @@ class PactoInstanceTest extends \PHPUnit_Framework_TestCase
     private $onTearDown;
     private $makeRequest;
     private $pact;
+    private $strict;
 
-    public function __construct($name, \Closure $onTearDown, \Closure $onSetUp, \Closure $makeRequest, Pact $p)
+    public function __construct($name, \Closure $onTearDown, \Closure $onSetUp, \Closure $makeRequest, Pact $p, $strict = false)
     {
         parent::__construct($name);
 
@@ -25,6 +26,7 @@ class PactoInstanceTest extends \PHPUnit_Framework_TestCase
         $this->onSetup = $onSetUp;
         $this->makeRequest = $makeRequest;
         $this->pact = $p;
+        $this->strict = $strict;
     }
 
     public function setUp()
@@ -47,17 +49,16 @@ class PactoInstanceTest extends \PHPUnit_Framework_TestCase
 
     public function assertResponse(Pact $p, ResponseInterface $r)
     {
+        $statusCodeMatcher = new StatusCodeMatcher();
+        $statusCodeDiff = $statusCodeMatcher->match($p->getResponse(), $r);
+
         $headersMatcher = new HeadersMatcher();
         $headersDiff = $headersMatcher->match($p->getResponse(), $r);
 
         $bodyMatcher = new BodyMatcher();
-        $bodyDiff =$bodyMatcher->match($p->getResponse(), $r);
+        $bodyDiff = $bodyMatcher->match($p->getResponse(), $r);
 
-        $statusCodeMatcher = new StatusCodeMatcher();
-        $statusCodeDiff = $statusCodeMatcher->match($p->getResponse(), $r);
-
-
-        $diffs = $headersDiff->merge($bodyDiff, $statusCodeDiff);
+        $diffs = Diff::merge($statusCodeDiff, $headersDiff, $bodyDiff);
 
         if ($diffs->hasMismatches()) {
             $output = new MismatchDiffOutput(true);

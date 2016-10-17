@@ -26,16 +26,15 @@ class HeadersMatcher
 
     private function compareHeaders($expectedHeaders, $actualHeaders)
     {
-        $diff = $this->getDiffInHeadersKeys($expectedHeaders, $actualHeaders);
-        $diff = $diff->merge($this->getDiffInHeadersValues($expectedHeaders, $actualHeaders));
+        $diff = new Diff();
+        $this->diffInHeadersKeys($diff, $expectedHeaders, $actualHeaders);
+        $this->diffInHeadersValues($diff, $expectedHeaders, $actualHeaders);
 
         return $diff;
     }
 
-    private function getDiffInHeadersKeys($expectedHeaders, $actualHeaders)
+    private function diffInHeadersKeys(Diff $diff, $expectedHeaders, $actualHeaders)
     {
-        $diff = new Diff();
-
         $keys = array_diff(array_keys($expectedHeaders), array_keys($actualHeaders));
 
         foreach ($keys as $key) {
@@ -47,14 +46,10 @@ class HeadersMatcher
                 )
             );
         }
-
-        return $diff;
     }
 
-    private function getDiffInHeadersValues($expectedHeaders, $actualHeaders)
+    private function diffInHeadersValues(Diff $diff, $expectedHeaders, $actualHeaders)
     {
-        $diff = new Diff();
-
         foreach ($expectedHeaders as $key => $expectedValues) {
             if (key_exists($key, $actualHeaders)) {
                 $actualValues = $actualHeaders[$key];
@@ -72,7 +67,5 @@ class HeadersMatcher
                 }
             }
         }
-
-        return $diff;
     }
 }

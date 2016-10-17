@@ -32,36 +32,36 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
     public function testItShouldGetPactsByDescription()
     {
         //there are actually 2 pacts named a request for an alligator in provider Animal Service 2
-        $pacts = $this->getPactsByDescription("Animal Service 2", "a request for an alligator");
+        $pacts = $this->getPactsByDescription('Animal Service 2', 'a request for an alligator');
         $this->assertCount(2, $pacts);
     }
 
-    public function testItShouldGetZerpPactsWhenProviderDoesNotExists()
+    public function testItShouldGetZeroPactsWhenProviderDoesNotExists()
     {
         //there are actually 2 pacts named a request for an alligator in provider Animal Service 2
-        $pacts =$this->getPactsByDescription("No provider", "a request for an alligator");
+        $pacts = $this->getPactsByDescription('No provider', 'a request for an alligator');
         $this->assertCount(0, $pacts);
     }
 
     public function testItShouldGetZeroPactsWhenDescriptionDoesNotExists()
     {
         //there are actually 2 pacts named a request for an alligator in provider Animal Service 2
-        $pacts =$this->getPactsByDescription("Animal Service 2", "a fake request for an alligator");
+        $pacts = $this->getPactsByDescription('Animal Service 2', 'a fake request for an alligator');
         $this->assertCount(0, $pacts);
     }
 
     public function testItShouldGetPactsByProviderState()
     {
-        $pacts = $this->getPactsByProviderState("Animal Service 2", "there is not an alligator named Mary");
+        $pacts = $this->getPactsByProviderState('Animal Service 2', 'there is not an alligator named Mary');
         $this->assertCount(1, $pacts);
     }
 
     public function testItShouldGetPactsByDescriptionProviderState()
     {
-        $pacts =$this->getPactsByDescriptionAndState(
-            "Animal Service 2",
-            "a 404 request for an alligator",
-            "there is not an alligator named Mary"
+        $pacts = $this->getPactsByDescriptionAndState(
+            'Animal Service 2',
+            'a 404 request for an alligator',
+            'there is not an alligator named Mary'
         );
 
         $this->assertCount(1, $pacts);
@@ -70,9 +70,9 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
     public function testItCompareStrictSameResponses()
     {
         $pact = $this->getPactsByDescriptionAndState(
-            "Animal Service",
-            "a request for an alligator",
-            "there is an alligator named Mary"
+            'Animal Service',
+            'a request for an alligator',
+            'there is an alligator named Mary'
         );
 
         $response = $this->loadResponseForPactoRequestForAnAlligator();
@@ -82,9 +82,9 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
     public function testItCompareSameResponses()
     {
         $pact = $this->getPactsByDescriptionAndState(
-            "Animal Service",
-            "a request for an alligator",
-            "there is an alligator named Mary"
+            'Animal Service',
+            'a request for an alligator',
+            'there is an alligator named Mary'
         );
 
         $response = $this->loadResponseForPactoRequestForAnAlligator(
@@ -97,9 +97,9 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
     public function testItShouldFailWhenStatusCodeIsNotHonored()
     {
         $pact = $this->getPactsByDescriptionAndState(
-            "Animal Service",
-            "a request for an alligator",
-            "there is an alligator named Mary"
+            'Animal Service',
+            'a request for an alligator',
+            'there is an alligator named Mary'
         );
 
         $response = $this->loadResponseForPactoRequestForAnAlligator(
@@ -109,18 +109,18 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
 
         try {
             $this->assertResponse($pact[0], $response);
-            $this->fail("Failing asserting that response are not equals");
-        } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->assertContains("Status Code Expectation Failed", $e->getMessage());
+            $this->fail('Failing asserting that response are not equals');
+        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
+            $this->assertContains('Status Code Expectation Failed', $e->getMessage());
         }
     }
 
     public function testItShouldFailWhenHeadersAreNotHonored()
     {
         $pact = $this->getPactsByDescriptionAndState(
-            "Animal Service",
-            "a request for an alligator",
-            "there is an alligator named Mary"
+            'Animal Service',
+            'a request for an alligator',
+            'there is an alligator named Mary'
         );
 
         $response = $this->loadResponseForPactoRequestForAnAlligator(
@@ -131,18 +131,18 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
 
         try {
             $this->assertResponse($pact[0], $response);
-            $this->fail("Failing asserting that response are not equals");
-        } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->assertContains("Headers content mismatch", $e->getMessage());
+            $this->fail('Failing asserting that response are not equals');
+        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
+            $this->assertContains('Headers content mismatch', $e->getMessage());
         }
     }
 
     public function testItShouldFailWhenHeadersKeysAreNotHonored()
     {
         $pact = $this->getPactsByDescriptionAndState(
-            "Animal Service",
-            "a request for an alligator",
-            "there is an alligator named Mary"
+            'Animal Service',
+            'a request for an alligator',
+            'there is an alligator named Mary'
         );
 
         $response = $this->loadResponseForPactoRequestForAnAlligator(
@@ -154,36 +154,36 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
 
         try {
             $this->assertResponse($pact[0], $response);
-            $this->fail("Failing asserting that response are not equals");
-        } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->assertContains("Missed key in response headers", $e->getMessage());
+            $this->fail('Failing asserting that response are not equals');
+        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
+            $this->assertContains('Missed key in response headers', $e->getMessage());
         }
     }
 
     public function testItShouldFailWithContentMismatch()
     {
         $pact = $this->getPactsByDescriptionAndState(
-            "Animal Service",
-            "a request for an alligator",
-            "there is an alligator named Mary"
+            'Animal Service',
+            'a request for an alligator',
+            'there is an alligator named Mary'
         );
 
         $response = $this->loadResponseForPactoRequestForAnAlligator(['name' => 'MaryJO']);
 
         try {
             $this->assertResponse($pact[0], $response, true);
-            $this->fail("Failing asserting that response are not equals");
-        } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->assertContains("Body mismatch", $e->getMessage());
+            $this->fail('Failing asserting that response are not equals');
+        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
+            $this->assertContains('Body mismatch', $e->getMessage());
         }
     }
 
     public function testItShouldFailWithContentMismatchDuringNoStrictBodyComparision()
     {
         $pact = $this->getPactsByDescriptionAndState(
-            "Animal Service",
-            "a request for an alligator",
-            "there is an alligator named Mary"
+            'Animal Service',
+            'a request for an alligator',
+            'there is an alligator named Mary'
         );
 
         $response = $this->loadResponseForPactoRequestForAnAlligator();
@@ -193,12 +193,12 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
 
         try {
             $this->assertResponse($pact[0], $response, false);
-            $this->fail("Failing asserting that response are not equals");
-        } catch(\PHPUnit_Framework_ExpectationFailedException $e) {
-            $this->assertContains("Body key mismatch", $e->getMessage());
+            $this->fail('Failing asserting that response are not equals');
+        } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
+            $this->assertContains('Body key mismatch', $e->getMessage());
         }
     }
-    
+
     private function loadResponseForPactoRequestForAnAlligator($extraFields = [], $statusCode = 200, $extraHeaders = [])
     {
         $stream = new Stream('php://memory', 'w');
@@ -215,7 +215,7 @@ class PactoIntegrationTestTest extends PactoIntegrationTest
 
         $headers = array_merge($headers, $extraHeaders);
 
-        foreach($headers as $key => $header) {
+        foreach ($headers as $key => $header) {
             $response = $response->withAddedHeader($key, $header);
         }
 

@@ -4,15 +4,13 @@ namespace Pact\Phpacto\Test;
 
 use Pact\Phpacto\Service\PactProviderService;
 
-
-define("DEFAULT_CONSUMER_CONTRACTS", __DIR__ . "/consumer-contracts");
+define('DEFAULT_CONSUMER_CONTRACTS', __DIR__.'/consumer-contracts');
 
 /**
- * Class PactoPactProviderServiceTest
+ * Class PactoPactProviderServiceTest.
  */
 class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
 {
-
     private static $providerService;
     private $svc;
 
@@ -23,7 +21,7 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
     {
         if (is_null(self::$providerService)) {
             self::$providerService = new PactProviderService(DEFAULT_CONSUMER_CONTRACTS);
-            self::$providerService->ServiceConsumer("service_A")->HasPactWith("service_B");
+            self::$providerService->ServiceConsumer('service_A')->HasPactWith('service_B');
         }
     }
 
@@ -47,26 +45,24 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
         $this->svc->Stop();
     }
 
-
     public function testPactoProviderService()
     {
-
-        $expectedResponse = array(
-                "status" => 200,
-                "headers" => array("Content-Type" => "application/json;charset=utf-8"),
-                "body" => array("name" => "Mary")
-        );
+        $expectedResponse = [
+                'status' => 200,
+                'headers' => ['Content-Type' => 'application/json;charset=utf-8'],
+                'body' => ['name' => 'Mary'],
+        ];
 
         // Arrange
         $this->svc
-                ->Given("some provider state")
-                ->UponReceiving("some description of the interaction")
+                ->Given('some provider state')
+                ->UponReceiving('some description of the interaction')
                 ->With(
-                        array(
-                                "method" => "get",
-                                "path" => "/some/path",
-                                "headers" => array("Accept" => "application/json")
-                        )
+                        [
+                                'method' => 'get',
+                                'path' => '/some/path',
+                                'headers' => ['Accept' => 'application/json'],
+                        ]
                 )
                 ->WillRespond($expectedResponse);
 
@@ -74,7 +70,7 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
         $actualResponse = $this->svc->Start();
 
         // Assert
-        $actualResponseBody = json_decode((string)$actualResponse->getBody(), true);
+        $actualResponseBody = json_decode((string) $actualResponse->getBody(), true);
         $this->assertEquals($expectedResponse['body'], $actualResponseBody);
         $this->assertEquals($expectedResponse['status'], $actualResponse->getStatus());
         $this->assertEquals($expectedResponse['headers'], $actualResponse->headers()->all());
@@ -85,53 +81,51 @@ class PactoPactProviderServiceTest extends \PHPUnit_Framework_TestCase
 
         // Arrange
         $this->svc
-                ->Given("some provider state")
-                ->UponReceiving("some description of the interaction")
+                ->Given('some provider state')
+                ->UponReceiving('some description of the interaction')
                 ->With(
-                        array(
-                            "method" => "get",
-                            "path" => "/some/path"
-                        )
+                        [
+                            'method' => 'get',
+                            'path' => '/some/path',
+                        ]
                 )
                 ->WillRespond(
-                        array(
-                            "status" => 200,
-                            "body" => "The quick brown fox..."
-                        )
+                        [
+                            'status' => 200,
+                            'body' => 'The quick brown fox...',
+                        ]
                 );
 
         // Act
         $actualResponse = $this->svc->Start();
 
         // Assert
-        $this->assertEquals($actualResponse->headers()->all(), array() );
+        $this->assertEquals($actualResponse->headers()->all(), []);
     }
 
-
     public function testAllowCustomResponseToHaveNoBodyWhenReturned()
-        {
+    {
 
             // Arrange
             $this->svc
-                    ->Given("some provider state")
-                    ->UponReceiving("some description of the interaction")
+                    ->Given('some provider state')
+                    ->UponReceiving('some description of the interaction')
                     ->With(
-                            array(
-                                "method" => "get",
-                                "path" => "/some/path"
-                            )
+                            [
+                                'method' => 'get',
+                                'path' => '/some/path',
+                            ]
                     )
                     ->WillRespond(
-                            array(
-                                "status" => 200
-                            )
+                            [
+                                'status' => 200,
+                            ]
                     );
 
             // Act
             $actualResponse = $this->svc->Start();
 
             // Assert
-            $this->assertEquals($actualResponse->getBody(), "");
-        }
-
+            $this->assertEquals($actualResponse->getBody(), '');
+    }
 }

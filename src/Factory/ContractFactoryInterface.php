@@ -8,6 +8,7 @@ interface ContractFactoryInterface
 {
     /**
      * @param $jsonDescription
+     *
      * @return Pact
      */
     public function from($jsonDescription);

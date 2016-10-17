@@ -2,7 +2,6 @@
 
 namespace Pact\Phpacto\Matcher;
 
-use Pact\Phpacto\Diff\Diff;
 use Pact\Phpacto\Diff\Mismatch;
 use Pact\Phpacto\Diff\MismatchType;
 use Zend\Diactoros\Request;
@@ -18,31 +17,29 @@ class HeadersMatcherTest extends \PHPUnit_Framework_TestCase
     }
     public function testItShouldReturnsNoDiffIfHeadersAreEquals()
     {
-        $messageOne = (new Request())
+        $expected = (new Request())
             ->withHeader('key1', '124')
             ->withHeader('key2', ['ciao', 'ciao']);
 
-        $messageTwo = (new Request())
+        $actual = (new Request())
             ->withHeader('key1', '124')
             ->withHeader('key2', '124')
             ->withHeader('key2', ['ciao', 'ciao']);
 
-
-        $diff = $this->headersMatcher->match($messageOne, $messageTwo);
+        $diff = $this->headersMatcher->match($expected, $actual);
         $this->assertCount(0, $diff->getMismatches());
     }
 
     public function testItShouldReturnsHeaderKeysMismatches()
     {
-        $messageOne = (new Request())
+        $expected = (new Request())
             ->withHeader('key1', '124')
             ->withHeader('key2', ['ciao', 'ciao']);
 
-        $messageTwo = (new Request())
+        $actual = (new Request())
             ->withHeader('key1', '124');
 
-
-        $diff = $this->headersMatcher->match($messageOne, $messageTwo);
+        $diff = $this->headersMatcher->match($expected, $actual);
         $this->assertCount(1, $diff->getMismatches());
         $this->assertEquals(
             $diff->getMismatches()[0],
@@ -55,16 +52,15 @@ class HeadersMatcherTest extends \PHPUnit_Framework_TestCase
      */
     public function testItShouldReturnsHeaderValuesMismatches()
     {
-        $messageOne = (new Request())
+        $expected = (new Request())
             ->withHeader('key1', 'pippo')
             ->withHeader('key2', ['ciao', 'ciao']);
 
-        $messageTwo = (new Request())
+        $actual = (new Request())
             ->withHeader('key1', '12s4')
             ->withHeader('key2', ['ciao kikko', 'ciao']);
 
-
-        $diff = $this->headersMatcher->match($messageOne, $messageTwo);
+        $diff = $this->headersMatcher->match($expected, $actual);
         $this->assertCount(2, $diff->getMismatches());
 
         $this->assertEquals(

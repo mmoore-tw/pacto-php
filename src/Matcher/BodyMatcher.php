@@ -17,19 +17,27 @@ class BodyMatcher
         return $this->compareBodyResponse($expected->getBody(), $actual->getBody());
     }
 
-    private function compareBodyResponse(StreamInterface $expected, StreamInterface $actualBody)
+    private function compareBodyResponse(StreamInterface $expected, StreamInterface $actual)
     {
         $diff = new Diff();
 
         $expected->rewind();
-        $actualBody->rewind();
+        $actual->rewind();
 
-        $expectedBody = json_decode($expected->getContents(), true);
-        $body = json_decode($actualBody->getContents(), true);
+        $expectedBody = $expected->getContents();
+        $actualBody = $actual->getContents();
+
+        if (($json = json_decode($expectedBody, true)) !== null) {
+            $expectedBody = $json;
+        }
+
+        if (($json = json_decode($actualBody, true)) !== null) {
+            $actualBody = $json;
+        }
 
         if ($expectedBody) {
-            $this->getDiffRecursively($expectedBody, $body, $diff);
-        } elseif ($body !== $expectedBody) {
+            $this->getDiffRecursively(self::LOCATION, $expectedBody, $actualBody, $diff);
+        } else {
             $diff->add(
                 new Mismatch(
                     self::LOCATION,
@@ -41,33 +49,54 @@ class BodyMatcher
         return $diff;
     }
 
-    private function getDiffRecursively($expectedBody, $actualBody, Diff $diff)
+    private function getDiffRecursively($location, $expectedBody, $actualBody, Diff $diff)
     {
-        foreach ($expectedBody as $key => $value) {
-            if (!key_exists($key, $actualBody)) {
-                $diff->add(
-                    new Mismatch(
-                        self::LOCATION,
-                        MismatchType::KEY_NOT_FOUND,
-                        [$key]
-                    )
-                );
-            }
-            else {
-                if ($actualBody[$key] !== $expectedBody[$key]) {
+        if (is_array($expectedBody) && is_array($actualBody)) {
+            foreach ($expectedBody as $key => $value) {
+                if (is_string($key)) {
+                    $currentLocation = $location.' => "'.$key.'"';
+                } else {
+                    $currentLocation = $location.' => '.$key;
+                }
+
+                if (key_exists($key, $actualBody)) {
+                    if (is_array($value)) {
+                        $this->getDiffRecursively($currentLocation, $value, $actualBody[$key], $diff);
+                    } elseif ($actualBody[$key] !== $expectedBody[$key]) {
+                        $diff->add(
+                            new Mismatch(
+                                $currentLocation,
+                                MismatchType::UNEQUAL,
+                                [$expectedBody[$key], $actualBody[$key]]
+                            )
+                        );
+                    }
+                } else {
                     $diff->add(
                         new Mismatch(
-                            self::LOCATION,
-                            MismatchType::UNEQUAL,
-                            [$expectedBody[$key], $actualBody[$key]]
+                            $currentLocation,
+                            MismatchType::KEY_NOT_FOUND,
+                            [$key]
                         )
                     );
                 }
             }
-
-            if (is_array($value)) {
-                $this->getDiffRecursively($value, $actualBody[$key], $diff);
-            }
+        } elseif (gettype($expectedBody) !== gettype($actualBody)) {
+            $diff->add(
+                new Mismatch(
+                    $location,
+                    MismatchType::TYPE_MISMATCH,
+                    [gettype($expectedBody), gettype($actualBody)]
+                )
+            );
+        } elseif ($expectedBody !== $actualBody) {
+            $diff->add(
+                new Mismatch(
+                    $location,
+                    MismatchType::UNEQUAL,
+                    [$expectedBody, $actualBody]
+                )
+            );
         }
 
         return $diff;

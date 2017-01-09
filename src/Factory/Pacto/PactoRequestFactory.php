@@ -10,11 +10,15 @@ class PactoRequestFactory implements PactoRequestFactoryInterface
 {
     public function from($requestArray)
     {
-        $str = new Stream('php://memory');
+        $body = isset($requestArray['body']) ? $requestArray['body'] : '';
+
+        $bodyStream = new Stream('php://memory', 'w');
+        $bodyStream->write(json_encode($body));
+
         $request = new Request(
             $requestArray['path'],
             $requestArray['method'],
-            $str,
+            $bodyStream,
             isset($requestArray['headers']) ? $requestArray['headers'] : []
         );
 

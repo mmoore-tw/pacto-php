@@ -59,6 +59,24 @@
       "response": {
         "status": 404
       }
+    },
+    {
+      "description": "a post to create an alligator",
+      "providerState": "none",
+      "request": {
+        "method": "post",
+        "path": "/alligators",
+        "headers": {
+          "Accept": "application/json"
+        },
+        "body" : {
+          "name" : "ally",
+          "color" : "green"
+        }
+      },
+      "response": {
+        "status": 200
+      }
     }
   ],
   "metadata": {

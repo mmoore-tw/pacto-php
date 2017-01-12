@@ -63,7 +63,7 @@ class PactoIntegrationTest
             $suite->addTest($t);
         }
 
-        $result = $runner->run($suite, ['colors' => 'never', 'backupGlobals' => false, 'backupStaticAttributes' => false]);
+        $result = $runner->run($suite, ['colors' => false, 'backupGlobals' => false, 'backupStaticAttributes' => false]);
 
         $errors = $result->errors();
         $failures = $result->failures();

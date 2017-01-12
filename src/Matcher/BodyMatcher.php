@@ -37,7 +37,7 @@ class BodyMatcher
 
         if ($expectedBody) {
             $this->getDiffRecursively(self::LOCATION, $expectedBody, $actualBody, $diff);
-        } else {
+        } else if ($actualBody) {
             $diff->add(
                 new Mismatch(
                     self::LOCATION,

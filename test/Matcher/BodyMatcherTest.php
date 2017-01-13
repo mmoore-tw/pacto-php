@@ -170,4 +170,22 @@ class BodyMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('Body => "level1" => "level2" => 0', $diff->getMismatches()[0]->getLocation());
     }
+
+    public function testItShouldReturnNoDiffIfExpectedAndActualEmpty()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write("{}");
+
+        $expected = (new Request())
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write("");
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(0, $diff->getMismatches());
+    }
 }

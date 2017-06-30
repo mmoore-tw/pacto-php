@@ -174,18 +174,56 @@ class BodyMatcherTest extends \PHPUnit_Framework_TestCase
     public function testItShouldReturnNoDiffIfExpectedAndActualEmpty()
     {
         $stream = new Stream('php://memory', 'w');
-        $stream->write("{}");
+        $stream->write('{}');
 
         $expected = (new Request())
             ->withBody($stream);
 
         $streamActual = new Stream('php://memory', 'w');
-        $streamActual->write("");
+        $streamActual->write('');
 
         $actual = (new Request())
             ->withBody($streamActual);
 
         $diff = $this->bodyMatcher->match($expected, $actual);
         $this->assertCount(0, $diff->getMismatches());
+    }
+
+    public function testItReturnDiffWhenExpectedBodyShouldBeValidJson()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write('Not a json');
+
+        $expected = (new Request())
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write('[]');
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(1, $diff->getMismatches());
+    }
+
+    public function testItReturnDiffWhenActualBodyShouldBeValidJson()
+    {
+        $stream = new Stream('php://memory', 'w');
+        $stream->write(json_encode('JSON'));
+
+        $expected = (new Request())
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($stream);
+
+        $streamActual = new Stream('php://memory', 'w');
+        $streamActual->write('Not a json');
+
+        $actual = (new Request())
+            ->withBody($streamActual);
+
+        $diff = $this->bodyMatcher->match($expected, $actual);
+        $this->assertCount(1, $diff->getMismatches());
     }
 }

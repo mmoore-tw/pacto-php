@@ -12,6 +12,11 @@ class PactoRequestFactory implements PactoRequestFactoryInterface
     {
         $body = isset($requestArray['body']) ? $requestArray['body'] : '';
 
+	$uriString = $requestArray['path'];
+        if (isset($requestArray['query'])) {
+            $uriString .= '?' . $requestArray['query'];
+        }		
+
         $bodyStream = new Stream('php://memory', 'w');
         $bodyStream->write(json_encode($body));
 

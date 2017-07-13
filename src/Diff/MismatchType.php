@@ -4,6 +4,7 @@ namespace Pact\Phpacto\Diff;
 
 final class MismatchType
 {
+    const JSON_CONTENT_EXPECTED = 'Should be a valid Json type';
     const TYPE_MISMATCH = 'Type mismatch expected %s received %s';
     const LENGTH_MISMATCH = 'Length mismatch, expected %d received %d';
     const UNEQUAL = 'Unequal expected %s received %s';

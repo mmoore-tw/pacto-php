@@ -16,6 +16,6 @@ class PactListFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('Animal Service', $pactList->getProvider());
         $this->assertEquals('Zoo App', $pactList->getConsumer());
-        $this->assertCount(3, $pactList->all());
+        $this->assertCount(4, $pactList->all());
     }
 }

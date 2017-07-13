@@ -14,10 +14,17 @@ class BodyMatcher
 
     public function match(MessageInterface $expected, MessageInterface $actual)
     {
-        return $this->compareBodyResponse($expected->getBody(), $actual->getBody());
+        $isJsonExpected = true;
+
+        $contentType = $expected->getHeaderLine('Content-Type');
+        if (strpos($contentType, 'application/json') === false && strpos($contentType, 'application/json') === false) {
+            $isJsonExpected = false;
+        }
+
+        return $this->compareBodyResponse($expected->getBody(), $actual->getBody(), $isJsonExpected);
     }
 
-    private function compareBodyResponse(StreamInterface $expected, StreamInterface $actual)
+    private function compareBodyResponse(StreamInterface $expected, StreamInterface $actual, $isJsonExpected = false)
     {
         $diff = new Diff();
 
@@ -29,10 +36,28 @@ class BodyMatcher
 
         if (($json = json_decode($expectedBody, true)) !== null) {
             $expectedBody = $json;
+        } elseif ($isJsonExpected) {
+            $diff->add(
+                new Mismatch(
+                    self::LOCATION,
+                    MismatchType::JSON_CONTENT_EXPECTED
+                )
+            );
+
+            return $diff;
         }
 
         if (($json = json_decode($actualBody, true)) !== null) {
             $actualBody = $json;
+        } elseif ($isJsonExpected) {
+            $diff->add(
+                new Mismatch(
+                    self::LOCATION,
+                    MismatchType::JSON_CONTENT_EXPECTED
+                )
+            );
+
+            return $diff;
         }
 
         if ($expectedBody) {

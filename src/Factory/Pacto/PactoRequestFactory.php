@@ -20,8 +20,8 @@ class PactoRequestFactory implements PactoRequestFactoryInterface
         $bodyStream = new Stream('php://memory', 'w');
         $bodyStream->write(json_encode($body));
 
-        // build the PSR-7 request 
-	$request = new Request(
+        // build the PSR-7 request
+        $request = new Request(
             $uriString,
             $requestArray['method'],
             $bodyStream,
